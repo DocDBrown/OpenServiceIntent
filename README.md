@@ -1,4 +1,5 @@
 # OpenAppIntent Format
+- transitioning to service by service planning because app level planning uses too much vontext length
 - Intent Driven Devlopment Yaml Spec
 - For Application Level Intent Driven Devlopment
 - Used to compress optional subkeys to simplify yaml for LLM operations
