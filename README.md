@@ -1,167 +1,116 @@
 # OpenAppIntent Format
-- transitioning to service by service planning because app level planning uses too much vontext length
+
 - Intent Driven Devlopment Yaml Spec
-- For Application Level Intent Driven Devlopment
-- Used to compress optional subkeys to simplify yaml for LLM operations
+- For Service Level Intent Driven Devlopment
   
-## Mandatory Fields
-
-```
-app_identity
-user_workflows
-auth
-deployments.targets
-```
-
-## Optional Fields
-
-```
-deployments.external_services
-secrets_provider
-domain_entities_and_relations
-integrations
-storage
-flows
-constraints
-design
-assets
-```
-
 ## Base Format
 
 ```
-app-identity:
-  name: ""
-  purpose: ""
-  validation:
-    acceptance:
-      - ""
-      - ""
-      - ""
-user-workflows:
-  - workflow: ""
-    steps: [""]
-  - workflow: ""
-    steps: [""]
-auth:
-  tenancy_model: "single_tenant"
-  authentication: ""
-  authorization: ""
-deployments:
-  targets:
-    - name: ""
-      platform: ""
-      language: ""
-      framework: ""
-      middleware: []
-      deployment: ""
-  external_services:
-    service:
-      - name: ""
-        platform: ""
-        type: ""
-        type_name_ref: ""
-        endpoints: []
-secrets_provider: ""
-domain-entities-and-relations: []
-integrations: []
-storage: []
-flows: []
+service_name: ""
+spec_version: "1.0.0"
+description: ""
+acceptance: []
 constraints: []
-design: []
-assets: []
-```
-
-## Example
-
-```
-app_identity:
-  name: "recipe-journal"
-  purpose: "A personal recipe journal where home cooks can save recipes, tag them by cuisine, and share read-only links with friends. Frontend is a React SPA; backend is a Go REST API."
-  validation:
-    acceptance:
-      - "User can create a recipe with title, ingredients list, and instructions; POST /api/recipes returns 201 with {\"id\":\"<uuid>\",\"status\":\"created\"}"
-      - "User can list their own recipes; GET /api/recipes returns 200 with {\"recipes\":[...],\"total\":<int>}"
-      - "User can fetch a shared recipe by share_token; GET /api/shared/{token} returns 200 with the recipe JSON or 404"
-      - "Frontend recipe list page renders within 1500ms on a 3G connection"
-      - "All pages meet WCAG 2.1 AA contrast ratio requirements"
-user-workflows:
-  - workflow: "save recipe"
-    steps:
-      - "User opens the recipe editor in the frontend"
-      - "User fills in title, ingredients, and instructions then clicks Save"
-      - "Frontend posts the recipe to the backend and receives a confirmation"
-      - "Frontend shows a success toast and navigates to the recipe detail page"
-  - workflow: "share recipe"
-    steps:
-      - "User opens a recipe they own and clicks Share"
-      - "Frontend requests a share_token from the backend"
-      - "Frontend displays the share URL for the user to copy"
+runtime:
+  language: ""
+  language_version: ""
+  middleware: []
+deployment_targets:
+  - { name: "", platform: "k8s|ios_store|android_store|lambda|vm", region: "", replicas: 0 }
+user_workflows: 
+  - workflow: ""
+    steps: [""]
+  - workflow: ""
+    steps: [""]
 auth:
-  tenancy_model: "single_tenant"
-  authentication: "session_cookie"
-  authorization: "owner_only"
-deployments:
-  targets:
-    - name: "recipe-web"
-      platform: "web_frontend_app"
-      language: "react-vite"
-      framework: "react"
-      middleware: []
-      deployment: "gitea.bossintent.com.au"
-    - name: "recipe-api"
-      platform: "backend_service"
-      language: "go"
-      framework: "net/http"
-      middleware: []
-      deployment: "gitea.bossintent.com.au"
-external_services:
-  service:
-    - name: "<kebab-case-name>"
-      platform: "saas|self_hosted|on_premise|cloud_managed|partner_api"
-      type: "<semantic-type>"
-      type_name_ref: "<stable-contract-ref>"
-      endpoints:
-        - "endpoint:<local-ref>|method:<verb>|path:<path>|protocol:<proto>|direction:<dir>|auth:<scheme>|scopes:<csv>|request:<key:type,...>|response:<key:type,...>|payload:<key:type,...>|status_codes:<csv>|rate_limit:<rpm>|idempotent:<bool>|timeout_ms:<int>|retry_policy:<policy>|content_type:<mime>|endpoint_url:<url>|endpoint_env:<env-var>|spec_ref:<global-ref>|version:<semver>"
-secrets_provider: "env_var"
+  tenancy_model: "single_tenant|multi_tenant|hybrid"
+  schemes:
+    - scheme_ref: "" 
+      type: "oidc|bearer_jwt|api_key|session_cookie|mtls|none"
+      provider: "auth0|internal|cognito" 
+      oidc:  
+        issuer: "" 
+        audience: "" 
+        flow: "authorization_code|client_credentials|device_code" 
+        scopes: ["openid", "profile", "email"] 
+  authorization:
+    model: "rbac|abac|scopes|none"  
+    roles: []
+depends_on_external_services: []   
+secrets_provider: []  
+integration_contexts:
+  - description: ""
+    direction: "exposes|consumes"
+    category: "api_communication|data_retrieval_and_aggregation|authentication_and_authorization|realtime_and_streaming_communication|event_driven_interaction|file_upload_download|direct_low_level_communcation"
+    type: "rest|graphql|grpc|websocket|webhook|sse|webrtc|kafka|rabbitmq|sqs|sns|nats|redis_pubsub|mqtt|amqp|s3|ftp|sftp|multipart_http|tcp|udp|unix_socket|shared_memory"
+    methods: []
+    path: ""
+    event_name: ""
+    auth:
+      scheme_ref: ""  
+      required_roles: [] 
+      required_permissions: []
+    content_type_request: ""
+    content_type_response: ""
+    request_body_schema: {}
+    response_body_schema: {}
+    http_status_codes: []
+    error_responses: []
+    requested_by: []
+    requested_from: []
+storage:  
+  database_contexts:  
+    - name: ""
+      category: "relational|document|key_value|wide_column|graph|vector|multi_model|ledger|time_series|spatial|blockchain|version_control|file_operation"
+      database_type: ""
+      host: ""
+      port: 0
+      database: ""
+      user_env: ""
+      password_env: ""
+      sslmode: ""
+      parameters": {}
+      models:
+        - { key_name: "", key_type: "table|collection|bucket|keyspace|node|table|serie|layer|chain|version_control|file_operation", values: [] }
+  version_control:
+    - { name: "", repo_type: "", repo_path: "", default_branch: "", access_transport: "", access_type: "", scopes: [], allowed_operations: [] }
+  file_storage:
+    - { name: "", backend: "local_fs|nfs|object_storage|artifact_store|provider_repo_files_api", root: "", bucket: "", prefix: "" }
 domain-entities-and-relations:
-  - "entity:Recipe"
-  - "attr:Recipe.id:uuid"
-  - "attr:Recipe.title:string"
-  - "attr:Recipe.ingredients:text"
-  - "attr:Recipe.instructions:text"
-  - "attr:Recipe.cuisine_tag:string"
-  - "attr:Recipe.share_token:string"
-  - "attr:Recipe.created_at:timestamp"
-  - "rel:Recipe.belongs_to:User"
-  - "entity:User"
-  - "attr:User.id:uuid"
-  - "attr:User.email:string"
-  - "rel:User.has_many:Recipe"
-integrations:
-  - "from:recipe-web|to:recipe-api|type:sync|protocol:rest|direction:request-response|endpoint:https://api.recipe-journal.local|endpoint_env:RECIPE_API_URL|spec_ref:recipe-api.v1"
-storage:
-  - "store:recipes-db|type:postgresql|endpoint:postgres://recipes-db:5432/recipes|endpoint_env:DATABASE_URL|purpose:Recipes and users|entities:Recipe,User|owned_by:recipe-api|read_by:recipe-api|write_by:recipe-api"
-flows:
-  - "flow:create-recipe|trigger:user-action|step:Frontend validates form fields client-side|step:Frontend sends POST /api/recipes with session cookie|step:Backend persists Recipe row|step:Backend returns {\"id\":\"<uuid>\",\"status\":\"created\"}"
-  - "flow:share-recipe|trigger:user-action|step:Frontend sends POST /api/recipes/{id}/share|step:Backend generates share_token and updates the Recipe row|step:Backend returns {\"share_url\":\"https://recipe-journal.local/shared/<token>\"}"
-constraints:
-  - "All API responses must use application/json content-type"
-  - "Session cookies must be Secure, HttpOnly, SameSite=Lax"
-  - "Frontend bundle size must not exceed 250KB gzipped"
-  - "Recipe list page must render within 1500ms on a 3G connection"
+  - entity: ""
+    owned_by: ""
+    storage_ref: ""
+    tenant_scoped: true
+    soft_delete: true
+    audited: true
+    attributes:
+      - { field: "", type: "", unique: , indexed:  }
+    relations:
+      - { has_many: "", fk: "", cascade: "" }
 design:
-  - "Primary color: #2E7D5B (forest green)"
-  - "Secondary color: #F5E6D3 (warm cream)"
-  - "Typography: Inter for UI text, Playfair Display for recipe titles | consumes:asset:inter-font,asset:playfair-font"
-  - "Spacing scale: 4px base unit (4, 8, 16, 24, 32, 48, 64)"
-  - "Border radius: 8px for cards, 4px for buttons and inputs"
-  - "Dark mode support with system preference detection"
-  - "Header displays app logo at 32px height on the left | consumes:asset:logo"
-  - "Landing page hero uses full-width food photography with title overlay | consumes:asset:hero-image"
+  tokens:
+    - { token: "", kind: "", value: "" }
+  patterns:
+    - { pattern: "",   kind: "", value: "", applies_to: "" }
+  compositions:
+    - composition: ""
+      scope: ""
+      description: ""
+      rferences_tokens: ""
+      references_patterns: ""
+  a11y:
+    - { a11y: "", kind: "", scope: "", standard: "", level: "", criterion: "1.4.3", metric: "", threshold: 0.0, requirement: "", verified_by: "" }
+  components:
+    - component: ""
+      kind: ""
+      variants: ""
+      sizes: ""
+      states: ""
+      slots: ""
+      aria_role: ""
+      css_vars_prefix: ""
+      implements_patterns: ""
+      implements_a11y: ""
 assets:
-  - "asset:logo|path:public/logo.svg|kind:svg|serves:recipe-web|placement:global.header|usage:render:inline-svg;alt:recipe-journal logo;preload:true"
-  - "asset:favicon|path:public/favicon.ico|kind:icon|serves:recipe-web|placement:global.meta|usage:render:favicon"
-  - "asset:hero-image|path:public/images/hero.webp|kind:image|serves:recipe-web|placement:page:landing.hero|usage:render:background-image;breakpoint:768-9999;alt:assorted home-cooked dishes;lazy:false;preload:true"
-  - "asset:inter-font|path:public/fonts/Inter-Variable.woff2|kind:font|serves:recipe-web|placement:global.font-face|usage:render:font-face;font-family:Inter;font-weight:100-900;preload:true"
-  - "asset:playfair-font|path:public/fonts/PlayfairDisplay-Variable.woff2|kind:font|serves:recipe-web|placement:global.font-face|usage:render:font-face;font-family:Playfair Display;font-weight:400-900;preload:true"```
+  - { asset: "", path: "", kind: "", mime: "", placement: "", render: "", alt: "", dimensions: "",  source: "", variants: "", purpose: "" }
+```
