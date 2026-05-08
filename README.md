@@ -114,3 +114,65 @@ design:
 assets:
   - { asset: "", path: "", kind: "", mime: "", placement: "", render: "", alt: "", dimensions: "",  source: "", variants: "", purpose: "" }
 ```
+
+## External Service Index 
+
+```
+external_service_name: ""
+description: ""
+```
+
+## External Service Value
+
+```
+external_service_name: ""
+spec_version: "1.0.0"
+description: ""
+endpoints:
+  - { name: "", base_url: "", region: "" }
+auth:
+  tenancy_model: "single_tenant|multi_tenant|hybrid"
+  schemes:
+    - scheme_ref: "" 
+      type: "oidc|bearer_jwt|api_key|session_cookie|mtls|none"
+      provider: "auth0|internal|cognito" 
+      credential_storage:
+        kind: "env|secret_manager|vault" 
+        name: "" 
+      oidc:  
+        issuer: "" 
+        audience: "" 
+        flow: "authorization_code|client_credentials|device_code" 
+        scopes: ["openid", "profile", "email"] 
+      hmac:  
+        secret_ref: ""
+        signature_header: ""
+        algorithm: ""
+  authorization:
+    model: "rbac|abac|scopes|none"  
+    roles: []
+rate_limits:
+  - { endpoint: "", limit: "", window: "", on_breach: "" }  
+integration_contexts:
+  - description: ""
+    direction: "exposes|consumes"
+    category: "api_communication|data_retrieval_and_aggregation|authentication_and_authorization|realtime_and_streaming_communication|event_driven_interaction|file_upload_download|direct_low_level_communcation"
+    type: "rest|graphql|grpc|websocket|webhook|sse|webrtc|kafka|rabbitmq|sqs|sns|nats|redis_pubsub|mqtt|amqp|s3|ftp|sftp|multipart_http|tcp|udp|unix_socket|shared_memory"
+    methods: []
+    path: ""
+    event_name: ""
+    auth:
+      scheme_ref: ""  
+      required_roles: [] 
+      required_permissions: []
+    content_type_request: ""
+    content_type_response: ""
+    request_body_schema: {}
+    response_body_schema: {}
+    http_status_codes: []
+    error_responses: []
+    requested_by: []
+    requested_from: []
+```
+
+
